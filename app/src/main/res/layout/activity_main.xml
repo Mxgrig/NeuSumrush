@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/targetNumberLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Target Number:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/targetNumberText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="0"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/targetNumberLabel"
+        app:layout_constraintTop_toTopOf="@+id/targetNumberLabel"
+        app:layout_constraintBottom_toBottomOf="@+id/targetNumberLabel" />
+
+    <TextView
+        android:id="@+id/timerLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time Left:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/timerText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/timerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/timerLabel"
+        app:layout_constraintBottom_toBottomOf="@+id/timerLabel" />
+
+    <TextView
+        android:id="@+id/scoreLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Score:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/targetNumberLabel" />
+
+    <TextView
+        android:id="@+id/scoreText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="0"
+        android:textColor="@android:color/holo_green_dark"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/scoreLabel"
+        app:layout_constraintTop_toTopOf="@+id/scoreLabel"
+        app:layout_constraintBottom_toBottomOf="@+id/scoreLabel" />
+
+    <TextView
+        android:id="@+id/currentSumLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Sum:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/currentSumText"
+        app:layout_constraintTop_toTopOf="@+id/scoreLabel" />
+
+    <TextView
+        android:id="@+id/currentSumText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textColor="@android:color/holo_purple"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/currentSumLabel"
+        app:layout_constraintBottom_toBottomOf="@+id/currentSumLabel" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/buttonGridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@+id/scoreLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Row 1 -->
+        <Button
+            android:id="@+id/button00"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <Button
+            android:id="@+id/button01"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toEndOf="@+id/button00"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <Button
+            android:id="@+id/button02"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toEndOf="@+id/button01"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <Button
+            android:id="@+id/button03"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toEndOf="@+id/button02"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <!-- Row 2 -->
+        <Button
+            android:id="@+id/button10"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button00"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <Button
+            android:id="@+id/button11"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toEndOf="@+id/button10"
+            app:layout_constraintTop_toBottomOf="@+id/button01"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <Button
+            android:id="@+id/button12"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toEndOf="@+id/button11"
+            app:layout_constraintTop_toBottomOf="@+id/button02"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <Button
+            android:id="@+id/button13"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toEndOf="@+id/button12"
+            app:layout_constraintTop_toBottomOf="@+id/button03"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <!-- Row 3 -->
+        <Button
+            android:id="@+id/button20"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button10"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <Button
+            android:id="@+id/button21"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toEndOf="@+id/button20"
+            app:layout_constraintTop_toBottomOf="@+id/button11"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <Button
+            android:id="@+id/button22"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toEndOf="@+id/button21"
+            app:layout_constraintTop_toBottomOf="@+id/button12"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <Button
+            android:id="@+id/button23"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toEndOf="@+id/button22"
+            app:layout_constraintTop_toBottomOf="@+id/button13"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <!-- Row 4 -->
+        <Button
+            android:id="@+id/button30"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button20"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <Button
+            android:id="@+id/button31"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toEndOf="@+id/button30"
+            app:layout_constraintTop_toBottomOf="@+id/button21"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <Button
+            android:id="@+id/button32"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toEndOf="@+id/button31"
+            app:layout_constraintTop_toBottomOf="@+id/button22"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+        <Button
+            android:id="@+id/button33"
+            style="@style/NumberButton"
+            app:layout_constraintStart_toEndOf="@+id/button32"
+            app:layout_constraintTop_toBottomOf="@+id/button23"
+            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintHeight_default="width"
+            app:layout_constraintDimensionRatio="1:1" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Clear Selection"
+        android:backgroundTint="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@+id/buttonGridLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout><?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:padding="16dp"
+tools:context=".MainActivity">
+
+<TextView
+    android:id="@+id/targetNumberLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Target Number:"
+    android:textSize="18sp"
+    android:textStyle="bold"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+<TextView
+    android:id="@+id/targetNumberText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:text="0"
+    android:textColor="@android:color/holo_blue_dark"
+    android:textSize="28sp"
+    android:textStyle="bold"
+    app:layout_constraintStart_toEndOf="@+id/targetNumberLabel"
+    app:layout_constraintTop_toTopOf="@+id/targetNumberLabel"
+    app:layout_constraintBottom_toBottomOf="@+id/targetNumberLabel" />
+
+<TextView
+    android:id="@+id/timerLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Time Left:"
+    android:textSize="18sp"
+    android:textStyle="bold"
+    app:layout_constraintEnd_toStartOf="@+id/timerText"
+    app:layout_constraintTop_toTopOf="parent" />
+
+<TextView
+    android:id="@+id/timerText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="10"
+    android:textColor="@android:color/holo_red_dark"
+    android:textSize="28sp"
+    android:textStyle="bold"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="@+id/timerLabel"
+    app:layout_constraintBottom_toBottomOf="@+id/timerLabel" />
+
+<TextView
+    android:id="@+id/scoreLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:text="Score:"
+    android:textSize="18sp"
+    android:textStyle="bold"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/targetNumberLabel" />
+
+<TextView
+    android:id="@+id/scoreText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:text="0"
+    android:textColor="@android:color/holo_green_dark"
+    android:textSize="24sp"
+    android:textStyle="bold"
+    app:layout_constraintStart_toEndOf="@+id/scoreLabel"
+    app:layout_constraintTop_toTopOf="@+id/scoreLabel"
+    app:layout_constraintBottom_toBottomOf="@+id/scoreLabel" />
+
+<TextView
+    android:id="@+id/currentSumLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Current Sum:"
+    android:textSize="18sp"
+    android:textStyle="bold"
+    app:layout_constraintEnd_toStartOf="@+id/currentSumText"
+    app:layout_constraintTop_toTopOf="@+id/scoreLabel" />
+
+<TextView
+    android:id="@+id/currentSumText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="0"
+    android:textColor="@android:color/holo_purple"
+    android:textSize="24sp"
+    android:textStyle="bold"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="@+id/currentSumLabel"
+    app:layout_constraintBottom_toBottomOf="@+id/currentSumLabel" />
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/buttonGridLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="24dp"
+    app:layout_constraintTop_toBottomOf="@+id/scoreLabel"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
+
+    <!-- Row 1 -->
+    <Button
+        android:id="@+id/button00"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <Button
+        android:id="@+id/button01"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toEndOf="@+id/button00"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <Button
+        android:id="@+id/button02"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toEndOf="@+id/button01"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <Button
+        android:id="@+id/button03"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toEndOf="@+id/button02"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <!-- Row 2 -->
+    <Button
+        android:id="@+id/button10"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button00"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <Button
+        android:id="@+id/button11"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toEndOf="@+id/button10"
+        app:layout_constraintTop_toBottomOf="@+id/button01"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <Button
+        android:id="@+id/button12"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toEndOf="@+id/button11"
+        app:layout_constraintTop_toBottomOf="@+id/button02"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <Button
+        android:id="@+id/button13"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toEndOf="@+id/button12"
+        app:layout_constraintTop_toBottomOf="@+id/button03"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <!-- Row 3 -->
+    <Button
+        android:id="@+id/button20"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button10"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <Button
+        android:id="@+id/button21"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toEndOf="@+id/button20"
+        app:layout_constraintTop_toBottomOf="@+id/button11"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <Button
+        android:id="@+id/button22"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toEndOf="@+id/button21"
+        app:layout_constraintTop_toBottomOf="@+id/button12"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <Button
+        android:id="@+id/button23"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toEndOf="@+id/button22"
+        app:layout_constraintTop_toBottomOf="@+id/button13"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <!-- Row 4 -->
+    <Button
+        android:id="@+id/button30"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button20"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <Button
+        android:id="@+id/button31"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toEndOf="@+id/button30"
+        app:layout_constraintTop_toBottomOf="@+id/button21"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <Button
+        android:id="@+id/button32"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toEndOf="@+id/button31"
+        app:layout_constraintTop_toBottomOf="@+id/button22"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+    <Button
+        android:id="@+id/button33"
+        style="@style/NumberButton"
+        app:layout_constraintStart_toEndOf="@+id/button32"
+        app:layout_constraintTop_toBottomOf="@+id/button23"
+        app:layout_constraintWidth_percent="0.23"
+        app:layout_constraintHeight_default="width"
+        app:layout_constraintDimensionRatio="1:1" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+<Button
+    android:id="@+id/resetButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="24dp"
+    android:text="Clear Selection"
+    android:backgroundTint="@android:color/darker_gray"
+    app:layout_constraintTop_toBottomOf="@+id/buttonGridLayout"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
