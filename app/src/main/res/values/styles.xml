@@ -9,4 +9,11 @@
         <item name="android:backgroundTint">@android:color/white</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
+
+    <!-- Theme for the app -->
+    <style name="Theme.SumRush" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
 </resources>

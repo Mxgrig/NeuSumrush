@@ -1,3 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SumRush</string>
+    <string name="target_number_label">Target:</string>
+    <string name="time_left_label">Time:</string>
+    <string name="score_label">Score:</string>
+    <string name="current_sum_label">Current:</string>
+    <string name="clear_selection">Clear Selection</string>
+    <string name="change_operation">Change Operation</string>
+    <string name="game_over">Game Over!</string>
+    <string name="your_score">Your Score:</string>
+    <string name="high_score">High Score:</string>
+    <string name="play_again">Play Again</string>
+
+    <!-- Default values -->
+    <string name="default_score">0</string>
+    <string name="default_target">0</string>
+    <string name="default_time">10</string>
+    <string name="default_sum">0</string>
+
+    <!-- Button content descriptions -->
+    <string name="button_desc_r1c1">Number button in row 1, column 1</string>
+    <string name="button_desc_r1c2">Number button in row 1, column 2</string>
+    <string name="button_desc_r1c3">Number button in row 1, column 3</string>
+    <string name="button_desc_r1c4">Number button in row 1, column 4</string>
+
+    <string name="button_desc_r2c1">Number button in row 2, column 1</string>
+    <string name="button_desc_r2c2">Number button in row 2, column 2</string>
+    <string name="button_desc_r2c3">Number button in row 2, column 3</string>
+    <string name="button_desc_r2c4">Number button in row 2, column 4</string>
+
+    <string name="button_desc_r3c1">Number button in row 3, column 1</string>
+    <string name="button_desc_r3c2">Number button in row 3, column 2</string>
+    <string name="button_desc_r3c3">Number button in row 3, column 3</string>
+    <string name="button_desc_r3c4">Number button in row 3, column 4</string>
+
+    <string name="button_desc_r4c1">Number button in row 4, column 1</string>
+    <string name="button_desc_r4c2">Number button in row 4, column 2</string>
+    <string name="button_desc_r4c3">Number button in row 4, column 3</string>
+    <string name="button_desc_r4c4">Number button in row 4, column 4</string>
+
+    <string name="button_desc_reset">Clear the currently selected buttons</string>
 </resources>
