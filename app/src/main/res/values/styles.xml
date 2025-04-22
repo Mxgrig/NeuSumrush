@@ -15,5 +15,48 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
+
+    </style>
+
+    <!-- Dialog animation style -->
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
+    </style>
+    <!-- Font style -->
+    <style name="GameFont.Regular" parent="@android:style/TextAppearance">
+        <item name="android:fontFamily">@font/fredoka_one</item>
+    </style>
+
+    <style name="GameFont.Title" parent="@android:style/TextAppearance">
+        <item name="android:fontFamily">@font/luckiest_guy</item>
+    </style>
+    <!-- Base application theme -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+    <!-- Glossy Number Button Style -->
+    <style name="GlossyNumberButton" parent="Widget.AppCompat.Button">
+        <!-- Background -->
+        <item name="android:background">@drawable/glossy_button</item>
+
+        <!-- Text appearance -->
+        <item name="android:textColor">@color/button_text</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/fredoka_one</item>
+
+        <!-- Layout -->
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_margin">4dp</item>
+
+        <!-- Effects -->
+        <item name="android:elevation">4dp</item>
+        <item name="android:stateListAnimator">@animator/button_state_animator</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
     </style>
 </resources>

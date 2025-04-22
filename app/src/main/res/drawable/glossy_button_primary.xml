@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?android:attr/colorControlHighlight">
+    <item>
+        <layer-list>
+            <!-- Shadow -->
+            <item android:left="2dp" android:top="2dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="8dp" />
+                    <solid android:color="#60000000" />
+                </shape>
+            </item>
+
+            <!-- Button background -->
+            <item android:bottom="2dp" android:right="2dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="8dp" />
+                    <gradient
+                        android:angle="270"
+                        android:startColor="#4C9EE8"
+                        android:centerColor="#2D7DD2"
+                        android:endColor="#006FC9"
+                        android:type="linear" />
+                    <stroke android:width="1dp" android:color="#0057A3" />
+                </shape>
+            </item>
+
+            <!-- Highlight/Shine -->
+            <item android:bottom="20dp">
+                <shape android:shape="rectangle">
+                    <corners
+                        android:topLeftRadius="8dp"
+                        android:topRightRadius="8dp" />
+                    <gradient
+                        android:angle="270"
+                        android:startColor="#80FFFFFF"
+                        android:endColor="#00FFFFFF"
+                        android:type="linear" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</ripple>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Existing colors from your file -->
     <color name="primary">#3F51B5</color>
     <color name="primary_dark">#303F9F</color>
-    <color name="primary_light">#C5CAE9</color>
-    <color name="accent">#FF4081</color>
+    <color name="primary_light">#5CAED7</color>
+    <color name="accent">#FF6081</color>
 
     <!-- Button colors -->
     <color name="button_normal">#FFFFFF</color>
@@ -11,10 +12,10 @@
     <color name="button_text">#212121</color>
 
     <!-- Timer colors -->
-    <color name="timer_normal">#F44336</color>
+    <color name="timer_normal">#F6433A</color>
     <color name="timer_warning">#D50000</color>
 
-    <!-- Score and game elements -->
+    <!-- Game element colors -->
     <color name="score_color">#4CAF50</color>
     <color name="target_color">#2196F3</color>
     <color name="current_sum_color">#9C27B0</color>
@@ -22,4 +23,12 @@
     <!-- Standard colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- ADD THESE MISSING COLORS -->
+    <color name="level_color">#2196F3</color>
+    <color name="life_color">#F44336</color>
+    <!-- New missing color -->
+    <color name="combo_color">#FF9800</color>
+    <color name="game_over_color">#E91E63</color>
+    <color name="high_score_color">#CDDC39</color>
 </resources>
