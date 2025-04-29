@@ -16,6 +16,14 @@
     <string name ="instructions_Text">Tap numbers that ADD UP to the target</string>
     <string name ="combo_text">×1</string>
     <string name ="lives_Text">❤❤❤</string>
+    <string name="level_up_text">LEVEL UP!</string>
+    <string name="combo_text_format">×%d</string>
+    <string name="double_points_text">DOUBLE POINTS!</string>
+    <string name="time_bonus_text">+5 SEC</string>
+    <string name="life_bonus_text">+1 LIFE</string>
+    <string name="super_combo_format">🔥🔥 SUPER COMBO x%d! 🔥🔥</string>
+    <string name="hot_combo_format">🔥 HOT COMBO x%d! 🔥</string>
+    <string name="combo_format">COMBO x%d!</string>
     <string name="operations_indicator">+</string>
     <string name="game_over">Game Over!</string>
     <string name="your_score">Your Score:</string>
