@@ -1,36 +1,47 @@
 package com.xtenalyze.sumrush
 
 import android.app.Dialog
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
 import android.media.AudioAttributes
-import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.os.VibratorManager
 import android.util.Log
 import android.view.View
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import kotlin.random.Random
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "SumRush"
+
+
 
     // Game state variables
     private var score = 0
@@ -167,6 +178,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var changeOperationButton: Button
     private lateinit var buttonGrid: Array<Array<Button>>
     private var selectedButtons = mutableListOf<Button>()
+    private lateinit var adView: AdView
 
     // Timer
     private var countDownTimer: CountDownTimer? = null
@@ -190,6 +202,28 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        // Apply insets to handle the system bars and display cutouts
+        val rootView = findViewById<View>(android.R.id.content)
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    or WindowInsetsCompat.Type.displayCutout())
+
+            // Apply padding to avoid content going under system bars
+            view.setPadding(insets.left, insets.top, insets.right, insets.bottom)
+
+            WindowInsetsCompat.CONSUMED
+        }
+        // Initialize AdMob - ADD THIS
+        MobileAds.initialize(this) { initializationStatus ->
+            Log.d(TAG, "AdMob initialization complete")
+        }
+
+        // Setup banner ad - ADD THIS
+        setupBannerAd()
+
         try {
             // Initialize UI elements
             levelText = findViewById(R.id.levelText)
@@ -204,6 +238,8 @@ class MainActivity : AppCompatActivity() {
             currentSumText = findViewById(R.id.currentSumText)
             resetButton = findViewById(R.id.resetButton)
             changeOperationButton = findViewById(R.id.changeOperationButton)
+
+
 
             if (!validateResources()) {
                 Toast.makeText(this, "Unable to load game resources", Toast.LENGTH_LONG).show()
@@ -240,15 +276,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
-
-
-
-
-
-
-
-
             // Initialize SoundPool
 
 
@@ -279,6 +306,9 @@ class MainActivity : AppCompatActivity() {
             // Initialize button grid
             try {
                 initializeButtonGrid()
+
+                // Add this line right here:
+                adjustButtonSizeForScreen()
             } catch (e: Exception) {
                 Log.e(TAG, "Error initializing button grid", e)
                 Toast.makeText(this, "Error setting up game board", Toast.LENGTH_LONG).show()
@@ -364,6 +394,29 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.e(TAG, "Error initializing button grid: ${e.message}")
             Toast.makeText(this, "Error setting up game board", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun adjustButtonSizeForScreen() {
+        val displayMetrics = resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+        val screenHeight = displayMetrics.heightPixels
+
+        // Use the smaller dimension to ensure square buttons
+        val smallerDimension = minOf(screenWidth, screenHeight)
+
+        // Account for padding and margins
+        val buttonSize = (smallerDimension / 5) // Divide by 5 to leave some space
+
+        // Apply size to all buttons in the grid
+        for (row in 0 until 4) {
+            for (col in 0 until 4) {
+                val button = buttonGrid[row][col]
+                val params = button.layoutParams
+                params.width = buttonSize
+                params.height = buttonSize
+                button.layoutParams = params
+            }
         }
     }
 
@@ -457,6 +510,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     private fun updateOperationDisplay() {
         try {
             when (currentOperation) {
@@ -464,31 +519,329 @@ class MainActivity : AppCompatActivity() {
                     operationIndicator.text = "+"
                     instructionsText.text = "Tap numbers that ADD UP to the target"
                 }
-
                 Operation.SUBTRACTION -> {
                     operationIndicator.text = "-"
                     instructionsText.text = "Tap numbers to SUBTRACT and reach the target"
                 }
-
                 Operation.MULTIPLICATION -> {
                     operationIndicator.text = "×"
                     instructionsText.text = "Tap numbers to MULTIPLY and reach the target"
                 }
-
                 Operation.DIVISION -> {
                     operationIndicator.text = "÷"
                     instructionsText.text = "Tap numbers to DIVIDE and reach the target"
                 }
             }
 
-            // Animate the operation indicator to draw attention
-            animateTextScale(operationIndicator)
-            val fadeAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in)
-            instructionsText.startAnimation(fadeAnimation)
+            // Enhanced animation for operation indicator
+            try {
+                // First bounce up and rotate slightly
+                val animSet = android.animation.AnimatorSet()
+
+                // Scale animation
+                val scaleX = android.animation.ObjectAnimator.ofFloat(operationIndicator, "scaleX", 1f, 1.5f, 1f)
+                val scaleY = android.animation.ObjectAnimator.ofFloat(operationIndicator, "scaleY", 1f, 1.5f, 1f)
+
+                // Rotation animation (slight wiggle)
+                val rotation = android.animation.ObjectAnimator.ofFloat(operationIndicator, "rotation", 0f, -10f, 10f, 0f)
+
+                // Play together
+                animSet.playTogether(scaleX, scaleY, rotation)
+                animSet.duration = 700
+                animSet.start()
+
+                // Fade in instructions
+                val fadeAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in)
+                fadeAnimation.duration = 400
+                instructionsText.startAnimation(fadeAnimation)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error animating operation display: ${e.message}")
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Error updating operation display: ${e.message}")
         }
     }
+
+    private fun animateScoreChange(points: Int) {
+        try {
+            // Update score text
+            scoreText.text = score.toString()
+
+            // Animate score text with bounce and color change
+            val scaleX = android.animation.ObjectAnimator.ofFloat(scoreText, "scaleX", 1f, 1.3f, 1f)
+            val scaleY = android.animation.ObjectAnimator.ofFloat(scoreText, "scaleY", 1f, 1.3f, 1f)
+
+            // Color flash animation (original color -> highlight -> original)
+            val originalColor = scoreText.currentTextColor
+            val highlightColor = Color.YELLOW
+
+            val colorAnim = android.animation.ValueAnimator.ofArgb(originalColor, highlightColor, originalColor)
+            colorAnim.addUpdateListener { animator ->
+                val color = animator.animatedValue as Int
+                scoreText.setTextColor(color)
+            }
+
+            val animSet = android.animation.AnimatorSet()
+            animSet.playTogether(scaleX, scaleY, colorAnim)
+            animSet.duration = 500
+            animSet.start()
+
+            // Combo animation if applicable
+            if (combo > 1) {
+                comboText.text = "×$combo"
+                comboText.visibility = View.VISIBLE
+
+                // Enhanced combo bounce animation
+                val comboScaleX = android.animation.ObjectAnimator.ofFloat(comboText, "scaleX", 1f, 1.4f, 1f)
+                val comboScaleY = android.animation.ObjectAnimator.ofFloat(comboText, "scaleY", 1f, 1.4f, 1f)
+
+                // Add slight rotation for emphasis
+                val comboRotate = android.animation.ObjectAnimator.ofFloat(comboText, "rotation", 0f, -5f, 5f, 0f)
+
+                val comboAnimSet = android.animation.AnimatorSet()
+                comboAnimSet.playTogether(comboScaleX, comboScaleY, comboRotate)
+                comboAnimSet.duration = 600
+                comboAnimSet.start()
+            } else {
+                comboText.visibility = View.INVISIBLE
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error animating score: ${e.message}")
+        }
+    }
+
+    private fun showComboFloater(comboValue: Int) {
+        try {
+            // Only show for combos >= 2
+            if (comboValue < 2) return
+
+            // Create the floating text
+            val comboFloater = TextView(this)
+
+            // Set appropriate text based on combo level
+            when {
+                comboValue >= 5 -> {
+                    comboFloater.text = "🔥🔥 SUPER COMBO x$comboValue! 🔥🔥"
+                    comboFloater.setTextColor(Color.rgb(255, 50, 50)) // Bright red
+                }
+                comboValue >= 3 -> {
+                    comboFloater.text = "🔥 HOT COMBO x$comboValue! 🔥"
+                    comboFloater.setTextColor(Color.rgb(255, 165, 0)) // Orange
+                }
+                else -> {
+                    comboFloater.text = "COMBO x$comboValue!"
+                    comboFloater.setTextColor(Color.YELLOW)
+                }
+            }
+
+            // Style the text
+            comboFloater.textSize = 24f
+            comboFloater.setShadowLayer(5f, 2f, 2f, Color.BLACK)
+
+            // Try to set the font
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    comboFloater.typeface = resources.getFont(R.font.luckiest_guy)
+                } else {
+                    comboFloater.typeface = ResourcesCompat.getFont(this, R.font.luckiest_guy)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error setting combo floater font: ${e.message}")
+            }
+
+            // Add to layout
+            val rootView = findViewById<View>(android.R.id.content)
+            val containerLayout = rootView as android.view.ViewGroup
+            containerLayout.addView(comboFloater)
+
+            // Position in center of screen
+            comboFloater.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+            comboFloater.x = (rootView.width - comboFloater.measuredWidth) / 2f
+            comboFloater.y = rootView.height / 2f
+
+            // Set initial properties for animation
+            comboFloater.alpha = 0f
+            comboFloater.scaleX = 0.5f
+            comboFloater.scaleY = 0.5f
+
+            // Create the animation sequence
+            val fadeIn = android.animation.ObjectAnimator.ofFloat(comboFloater, "alpha", 0f, 1f)
+            val scaleX = android.animation.ObjectAnimator.ofFloat(comboFloater, "scaleX", 0.5f, 1.2f, 1f)
+            val scaleY = android.animation.ObjectAnimator.ofFloat(comboFloater, "scaleY", 0.5f, 1.2f, 1f)
+
+            val animSet1 = android.animation.AnimatorSet()
+            animSet1.playTogether(fadeIn, scaleX, scaleY)
+            animSet1.duration = 500
+
+            // Then animate up and fade out
+            val moveUp = android.animation.ObjectAnimator.ofFloat(comboFloater, "translationY", 0f, -200f)
+            val fadeOut = android.animation.ObjectAnimator.ofFloat(comboFloater, "alpha", 1f, 0f)
+
+            val animSet2 = android.animation.AnimatorSet()
+            animSet2.playTogether(moveUp, fadeOut)
+            animSet2.duration = 800
+            animSet2.startDelay = 800 // Show the text for a moment before fading
+
+            // Sequence the animations
+            val finalAnimSet = android.animation.AnimatorSet()
+            finalAnimSet.playSequentially(animSet1, animSet2)
+            finalAnimSet.addListener(object : android.animation.Animator.AnimatorListener {
+                override fun onAnimationStart(animation: android.animation.Animator) {}
+                override fun onAnimationCancel(animation: android.animation.Animator) {}
+                override fun onAnimationRepeat(animation: android.animation.Animator) {}
+                override fun onAnimationEnd(animation: android.animation.Animator) {
+                    try {
+                        containerLayout.removeView(comboFloater)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error removing combo floater: ${e.message}")
+                    }
+                }
+            })
+            finalAnimSet.start()
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Error showing combo floater: ${e.message}")
+        }
+    }
+
+
+    private fun flashBackground() {
+        try {
+            // Create an overlay view for the flash effect
+            val flashOverlay = View(this)
+            flashOverlay.setBackgroundColor(Color.WHITE) // Start with white
+
+            // Add to layout with full screen size
+            val rootView = findViewById<View>(android.R.id.content)
+            val containerLayout = rootView as android.view.ViewGroup
+
+            val params = android.view.ViewGroup.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            containerLayout.addView(flashOverlay, params)
+
+            // Start with semi-transparent
+            flashOverlay.alpha = 0.7f
+
+            // Animate fade out
+            val fadeOut = android.animation.ObjectAnimator.ofFloat(flashOverlay, "alpha", 0.7f, 0f)
+            fadeOut.duration = 500
+            fadeOut.addListener(object : android.animation.Animator.AnimatorListener {
+                override fun onAnimationStart(animation: android.animation.Animator) {}
+                override fun onAnimationCancel(animation: android.animation.Animator) {}
+                override fun onAnimationRepeat(animation: android.animation.Animator) {}
+                override fun onAnimationEnd(animation: android.animation.Animator) {
+                    try {
+                        containerLayout.removeView(flashOverlay)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error removing flash overlay: ${e.message}")
+                    }
+                }
+            })
+            fadeOut.start()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error flashing background: ${e.message}")
+        }
+    }
+
+    // Update your levelUp function to include this
+    // Replace your existing levelUp() method with this:
+    private fun levelUp() {
+        try {
+            level++
+
+            // Flash the background
+            flashBackground()
+
+            // Play level up sound
+            try {
+                if (soundLevelUp > 0) {
+                    soundPool.play(soundLevelUp, 1f, 1f, 1, 0, 1f)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error playing level up sound: ${e.message}")
+            }
+
+            // Show level up animation
+            showLevelUpAnimation()
+
+            // Get new level settings
+            val settings = levelSettings[level] ?: levelSettings[10]!! // Use level 10 settings if beyond
+            availableOperations = settings.operations
+
+            // Update time for the new level
+            val timeInSeconds = settings.timeInSeconds
+            timeLeftInMillis = timeInSeconds * 1000L
+            maxTimeInMillis = timeLeftInMillis
+
+            // Update UI
+            updateUI()
+
+            // Reset game grid with new operations and numbers
+            resetGameGrid()
+
+            // Reset timer
+            countDownTimer?.cancel()
+            startCountdownTimer()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error leveling up: ${e.message}")
+        }
+    }
+
+    private fun animateButtonTap(button: Button) {
+        try {
+            // Create a scale down and up animation
+            val scaleDown = android.animation.ObjectAnimator.ofFloat(button, "scaleX", 1f, 0.9f)
+            val scaleUp = android.animation.ObjectAnimator.ofFloat(button, "scaleX", 0.9f, 1f)
+            val scaleDownY = android.animation.ObjectAnimator.ofFloat(button, "scaleY", 1f, 0.9f)
+            val scaleUpY = android.animation.ObjectAnimator.ofFloat(button, "scaleY", 0.9f, 1f)
+
+            // Add glow effect by changing the background drawable
+            val originalBackground = button.background
+
+            // Create a temporary drawable with a glow effect
+            // This assumes you have a glossy_button_glow drawable
+            try {
+                button.setBackgroundResource(R.drawable.glossy_button_glow)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error setting glow background: ${e.message}")
+            }
+
+            // Sequence the animations
+            val animSet = android.animation.AnimatorSet()
+            val scaleDownSet = android.animation.AnimatorSet()
+            scaleDownSet.playTogether(scaleDown, scaleDownY)
+            scaleDownSet.duration = 100
+
+            val scaleUpSet = android.animation.AnimatorSet()
+            scaleUpSet.playTogether(scaleUp, scaleUpY)
+            scaleUpSet.duration = 100
+
+            animSet.playSequentially(scaleDownSet, scaleUpSet)
+            animSet.addListener(object : android.animation.Animator.AnimatorListener {
+                override fun onAnimationStart(animation: android.animation.Animator) {}
+                override fun onAnimationCancel(animation: android.animation.Animator) {}
+                override fun onAnimationRepeat(animation: android.animation.Animator) {}
+                override fun onAnimationEnd(animation: android.animation.Animator) {
+                    // Restore original background if not selected
+                    if (!button.isSelected) {
+                        try {
+                            button.background = originalBackground
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Error restoring background: ${e.message}")
+                        }
+                    }
+                }
+            })
+            animSet.start()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error animating button tap: ${e.message}")
+        }
+    }
+
+    // Update your onNumberButtonClick method to include this animation
+
 
     private fun generateTargetAndFillGrid() {
         try {
@@ -671,6 +1024,48 @@ class MainActivity : AppCompatActivity() {
             checkForMatch()
         } catch (e: Exception) {
             Log.e(TAG, "Error handling button click: ${e.message}")
+        }
+    }
+
+    private fun setupBannerAd() {
+        try {
+            // Find the ad container
+            val adContainer = findViewById<RelativeLayout>(R.id.adContainer)
+
+            // Create new AdView programmatically
+            val adView = AdView(this)
+            adView.adUnitId = "ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
+            val bannerAdSize = AdSize.BANNER
+            adView.setAdSize(AdSize.BANNER)
+
+            // Set layout parameters
+            val params = RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+            )
+
+            // Add AdView to container
+            adContainer.addView(adView, params)
+
+            // Store reference as class property
+            this.adView = adView
+
+            // Load ad
+            val adRequest = AdRequest.Builder().build()
+            adView.loadAd(adRequest)
+
+            // Add listener
+            adView.adListener = object : AdListener() {
+                override fun onAdLoaded() {
+                    Log.d(TAG, "Ad loaded successfully")
+                }
+
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    Log.e(TAG, "Ad failed to load: ${error.message}")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error setting up banner ad: ${e.message}")
         }
     }
 
@@ -991,46 +1386,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun levelUp() {
-        try {
-            level++
 
-            // Play level up sound
-            soundPool.play(soundLevelUp, 1f, 1f, 1, 0, 1f)
-
-            // Show level up effect
-            showLevelUpAnimation()
-
-            // Get new level settings
-            val settings = levelSettings[level]
-                ?: levelSettings[10]!! // Use level 10 settings if beyond
-            availableOperations = settings.operations
-
-            // Update time for the new level
-            val timeInSeconds = settings.timeInSeconds
-            timeLeftInMillis = timeInSeconds * 1000L
-            maxTimeInMillis = timeLeftInMillis
-
-            // Update UI
-            updateUI()
-            animateTextScale(levelText)
-
-            // Reset game grid with new operations and numbers
-            resetGameGrid()
-
-            // Reset timer
-            countDownTimer?.cancel()
-            startCountdownTimer()
-        } catch (e: Exception) {
-            Log.e(TAG, "Error leveling up: ${e.message}")
-        }
-    }
 
     private fun showLevelUpAnimation() {
         try {
             // Create level up text animation
             val levelUpText = TextView(this)
-            levelUpText.text = "LEVEL UP!"
+            levelUpText.text = getString(R.string.level_up_text) // Use a string resource instead of hardcoded "LEVEL UP!"
             levelUpText.setTextColor(Color.YELLOW)
             levelUpText.textSize = 36f
             levelUpText.setShadowLayer(5f, 3f, 3f, Color.BLACK)
@@ -1044,64 +1406,49 @@ class MainActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error setting font: ${e.message}")
-                // Continue with default font
             }
 
             // Add to layout
-            try {
-                val rootView = findViewById<View>(android.R.id.content)
-                val containerLayout = rootView as android.view.ViewGroup
-                containerLayout.addView(levelUpText)
+            val rootView = findViewById<View>(android.R.id.content)
+            val containerLayout = rootView as android.view.ViewGroup
+            containerLayout.addView(levelUpText)
 
-                // Center the text
-                val params = levelUpText.layoutParams as android.view.ViewGroup.LayoutParams
-                params.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT
-                params.height = android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-                levelUpText.layoutParams = params
-                levelUpText.gravity = android.view.Gravity.CENTER
-                levelUpText.y = rootView.height / 2 - 100f
+            // Center the text
+            val params = levelUpText.layoutParams as android.view.ViewGroup.LayoutParams
+            params.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT
+            params.height = android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            levelUpText.layoutParams = params
+            levelUpText.gravity = android.view.Gravity.CENTER
+            levelUpText.y = rootView.height / 2 - 100f
 
-                // Use a simpler animation approach
-                levelUpText.scaleX = 0.1f
-                levelUpText.scaleY = 0.1f
-                levelUpText.alpha = 1f
+            // Set initial properties for animation
+            levelUpText.scaleX = 0.1f
+            levelUpText.scaleY = 0.1f
 
-                // Use a handler for animation sequence instead of chaining
-                val handler = android.os.Handler(android.os.Looper.getMainLooper())
-
-                // First animation - scale up
-                val scaleAnim = android.animation.ValueAnimator.ofFloat(0.1f, 2f)
-                scaleAnim.duration = 500
-                scaleAnim.addUpdateListener { animator ->
-                    val value = animator.animatedValue as Float
-                    levelUpText.scaleX = value
-                    levelUpText.scaleY = value
-                }
-                scaleAnim.start()
-
-                // Second animation after delay - fade out
-                handler.postDelayed({
-                    val fadeAnim = android.animation.ValueAnimator.ofFloat(1f, 0f)
-                    fadeAnim.duration = 500
-                    fadeAnim.addUpdateListener { animator ->
-                        val value = animator.animatedValue as Float
-                        levelUpText.alpha = value
-                    }
-                    fadeAnim.start()
-
-                    // Remove view after full animation
-                    handler.postDelayed({
-                        try {
-                            containerLayout.removeView(levelUpText)
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Error removing level up text: ${e.message}")
+            // Use standard Animation instead of ValueAnimator
+            val scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.scale_bounce)
+            scaleAnimation.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation) {}
+                override fun onAnimationRepeat(animation: Animation) {}
+                override fun onAnimationEnd(animation: Animation) {
+                    // Start fade out animation after scale completes
+                    val fadeOutAnim = AlphaAnimation(1.0f, 0.0f)
+                    fadeOutAnim.duration = 500
+                    fadeOutAnim.setAnimationListener(object : Animation.AnimationListener {
+                        override fun onAnimationStart(animation: Animation) {}
+                        override fun onAnimationRepeat(animation: Animation) {}
+                        override fun onAnimationEnd(animation: Animation) {
+                            try {
+                                containerLayout.removeView(levelUpText)
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error removing level up text: ${e.message}")
+                            }
                         }
-                    }, 500)
-                }, 500)
-
-            } catch (e: Exception) {
-                Log.e(TAG, "Error with level up animation: ${e.message}")
-            }
+                    })
+                    levelUpText.startAnimation(fadeOutAnim)
+                }
+            })
+            levelUpText.startAnimation(scaleAnimation)
 
             // Vibration feedback
             try {
@@ -1394,10 +1741,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onPause() {
+        adView.pause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        adView.resume()
+    }
+
+
+
     override fun onDestroy() {
         try {
             countDownTimer?.cancel()
             soundPool.release()
+            adView.destroy()
             super.onDestroy()
         } catch (e: Exception) {
             Log.e(TAG, "Error in onDestroy: ${e.message}")
