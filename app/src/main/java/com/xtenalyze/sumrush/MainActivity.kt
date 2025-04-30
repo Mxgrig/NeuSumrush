@@ -9,6 +9,8 @@ import android.media.SoundPool
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
@@ -29,17 +31,22 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "SumRush"
+    private var interstitialAd: InterstitialAd? = null
 
 
 
@@ -216,13 +223,19 @@ class MainActivity : AppCompatActivity() {
 
             WindowInsetsCompat.CONSUMED
         }
-        // Initialize AdMob - ADD THIS
-        MobileAds.initialize(this) { initializationStatus ->
-            Log.d(TAG, "AdMob initialization complete")
+        try {
+            MobileAds.initialize(this) { initializationStatus ->
+                Log.d(TAG, "AdMob initialization complete")
+                // Load the ad after initialization completes
+                Handler(Looper.getMainLooper()).postDelayed({
+                    loadInterstitialAd()
+                }, 1000) // Slight delay can help prevent ANRs
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error initializing ads: ${e.message}")
         }
 
-        // Setup banner ad - ADD THIS
-        setupBannerAd()
+        loadInterstitialAd()
 
         try {
             // Initialize UI elements
@@ -370,6 +383,55 @@ class MainActivity : AppCompatActivity() {
 
     // Add this method to the class
     // Fallback vibrator for devices with vibration issues
+
+    private fun loadInterstitialAd() {
+        try {
+            val adRequest = AdRequest.Builder().build()
+
+            InterstitialAd.load(
+                this,
+                "ca-app-pub-8169421610831095/9820954581",
+                adRequest,
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdLoaded(ad: InterstitialAd) {
+                        interstitialAd = ad
+                        Log.d(TAG, "Interstitial ad loaded successfully")
+
+                        interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() {
+                                interstitialAd = null
+                                // Use a delay before loading the next ad
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    loadInterstitialAd()
+                                }, 1000)
+                            }
+
+                            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                                interstitialAd = null
+                            }
+                        }
+                    }
+
+                    override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                        Log.d(TAG, "Interstitial ad failed to load: ${loadAdError.message}")
+                        interstitialAd = null
+                    }
+                }
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading interstitial ad: ${e.message}")
+        }
+    }
+
+    fun showInterstitialAd() {
+        if (interstitialAd != null) {
+            interstitialAd?.show(this)
+        } else {
+            Log.d(TAG, "Interstitial ad not ready yet")
+            // Try to load it again
+            loadInterstitialAd()
+        }
+    }
 
 
 
@@ -1570,6 +1632,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun showGameOverDialog() {
         try {
+            // Show Ad
+            showInterstitialAd()
             // Play game over sound
             soundPool.play(soundGameOver, 1f, 1f, 1, 0, 1f)
 
@@ -1748,7 +1812,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        adView.resume()
+
+        // Check if adView has been initialized before trying to use it
+        if (::adView.isInitialized) {
+            adView.resume()
+        } else {
+            // Initialize AdView if it hasn't been done yet
+            setupBannerAd()
+        }
     }
 
 
