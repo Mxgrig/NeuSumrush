@@ -14,11 +14,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
@@ -35,22 +37,24 @@ import kotlin.random.Random
 // Define the game title
 private val gameTitle = "SUMRUSH"
 
-// Define the main theme colors for SumRush
-private val primaryColor = Color(0xFF4CA0E8)  // Main blue
-private val accentColor = Color(0xFFF4D03F)   // Yellow for math symbols
+// Define the main theme colors for SumRush with more vibrant blues
+private val primaryColor = Color(0xFF2196F3)  // Brighter main blue
+private val accentColor = Color(0xFFFFC107)   // Brighter yellow for better contrast
+
+// Operation colors with enhanced vibrancy
 private val operationColors = listOf(
-    Color(0xFF5DADE2),  // Addition - Blue
-    Color(0xFFF1948A),  // Subtraction - Light Red
-    Color(0xFF7DCEA0),  // Multiplication - Light Green
-    Color(0xFFFB5B41)   // Division - Orange
+    Color(0xFF1E88E5),  // Addition - Vibrant Blue
+    Color(0xFFE53935),  // Subtraction - Vibrant Red
+    Color(0xFF43A047),  // Multiplication - Vibrant Green
+    Color(0xFFFF8F00)   // Division - Vibrant Orange
 )
 
-// Enhanced gradient colors
+// Enhanced gradient colors with more vibrant blues
 private val gradientColors = listOf(
-    Color(0xFF304FFE),   // Top color - deep blue
-    Color(0xFF1E88E5),   // Middle color - medium blue
-    Color(0xFF0288D1),   // Bottom color - lighter blue
-    Color(0xFF01579B)    // Added fourth color for richer gradient
+    Color(0xFF1A237E),   // Deep blue (darker)
+    Color(0xFF1976D2),   // Vibrant medium blue
+    Color(0xFF29B6F6),   // Bright lighter blue
+    Color(0xFF0D47A1)    // Rich deep blue
 )
 
 // Math symbols to animate around the screen
@@ -65,6 +69,78 @@ private data class ParticleData(
     val size: Float,
     val alpha: Float
 )
+
+// Add this function for glossy text effect
+@Composable
+private fun GlossyText(
+    text: String,
+    color: Color,
+    fontSize: androidx.compose.ui.unit.TextUnit,
+    fontFamily: FontFamily,
+    modifier: Modifier = Modifier,
+    scale: Float = 1f,
+    alpha: Float = 1f
+) {
+    Box(
+        modifier = modifier
+            .scale(scale)
+            .alpha(alpha)
+    ) {
+        // Main text
+        Text(
+            text = text,
+            style = TextStyle(
+                fontFamily = fontFamily,
+                fontSize = fontSize,
+                color = color,
+                shadow = Shadow(
+                    color = Color.Black.copy(alpha = 0.7f),
+                    offset = Offset(4f, 4f),
+                    blurRadius = 6f
+                )
+            )
+        )
+
+        // Glossy overlay - white gradient on top portion
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .alpha(0.6f)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = 0.7f),
+                            Color.Transparent
+                        ),
+                        startY = 0f,
+                        endY = fontSize.value / 2
+                    ),
+                    shape = RoundedCornerShape(4.dp)
+                )
+                .height((fontSize.value / 2).dp)
+        )
+
+        // Bottom glossy effect (subtle reflection)
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .offset(y = (fontSize.value * 0.8f).dp)
+                .alpha(0.3f)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = 0.4f),
+                            Color.Transparent
+                        ),
+                        startY = 0f,
+                        endY = fontSize.value / 3
+                    ),
+                    shape = RoundedCornerShape(2.dp)
+                )
+                .height((fontSize.value / 3).dp)
+        )
+    }
+}
 
 @Composable
 fun SumRushSplashScreen(onSplashFinished: () -> Unit) {
@@ -438,51 +514,64 @@ fun SumRushSplashScreen(onSplashFinished: () -> Unit) {
                 }
             }
 
-            // Animated text
-            Row(
+            // Enhanced 3D glossy SUMRUSH title with glow effect
+            Box(
                 modifier = Modifier
-                    .padding(20.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                gameTitle.forEachIndexed { index, letter ->
-                    val isVisible = index <= letterIndex
-                    val letterAlpha by animateFloatAsState(
-                        targetValue = if (isVisible) 1f else 0f,
-                        animationSpec = tween(durationMillis = 150)
-                    )
-
-                    val letterScale by animateFloatAsState(
-                        targetValue = if (isVisible) 1f else 0f,
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioMediumBouncy,
-                            stiffness = Spring.StiffnessMedium
+                    .padding(vertical = 20.dp)
+                    .drawBehind {
+                        // Draw a subtle glow behind the entire title
+                        drawRoundRect(
+                            color = Color(0xFF0091EA).copy(alpha = 0.3f),
+                            cornerRadius = CornerRadius(20f, 20f),
+                            size = size.copy(
+                                width = size.width + 20.dp.toPx(),
+                                height = size.height + 20.dp.toPx()
+                            ),
+                            topLeft = Offset(-10.dp.toPx(), -10.dp.toPx()),
+                            style = Stroke(width = 10.dp.toPx(), join = StrokeJoin.Round)
                         )
-                    )
-
-                    val letterColor = when (index) {
-                        0, 3, 6 -> operationColors[0]  // S, R, H
-                        1, 4 -> operationColors[1]     // U, U
-                        2, 5 -> operationColors[2]     // M, S
-                        else -> accentColor
                     }
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                ) {
+                    gameTitle.forEachIndexed { index, letter ->
+                        val isVisible = index <= letterIndex
+                        val letterAlpha by animateFloatAsState(
+                            targetValue = if (isVisible) 1f else 0f,
+                            animationSpec = tween(durationMillis = 150)
+                        )
 
-                    Text(
-                        text = letter.toString(),
-                        style = TextStyle(
-                            fontFamily = gameFont,
-                            fontSize = 72.sp,
-                            color = letterColor,
-                            shadow = Shadow(
-                                color = Color.Black.copy(alpha = 0.6f),
-                                offset = Offset(3f, 3f),
-                                blurRadius = 5f
+                        val letterScale by animateFloatAsState(
+                            targetValue = if (isVisible) 1f else 0f,
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessMedium
                             )
-                        ),
-                        modifier = Modifier
-                            .alpha(letterAlpha)
-                            .padding(horizontal = 2.dp)
-                            .scale(letterScale)
-                    )
+                        )
+
+                        // Enhanced more vibrant colors with blue emphasis
+                        val letterColor = when (index) {
+                            // Make all letters a more vibrant blue except a few accent letters
+                            0, 1, 2, 5 -> Color(0xFF0091EA) // Brighter, more vibrant blue
+                            3, 6 -> Color(0xFF2979FF)       // Slightly different blue for contrast
+                            4 -> operationColors[1]         // Keep accent color for 'U'
+                            else -> accentColor             // Keep accent for remaining
+                        }
+
+                        // Use our glossy text component
+                        GlossyText(
+                            text = letter.toString(),
+                            color = letterColor,
+                            fontSize = 80.sp, // Increased size from 72 to 80
+                            fontFamily = gameFont,
+                            modifier = Modifier
+                                .alpha(letterAlpha)
+                                .padding(horizontal = 2.dp),
+                            scale = letterScale
+                        )
+                    }
                 }
             }
 

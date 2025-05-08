@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.LinearGradient
+import android.graphics.Shader
 import android.media.AudioAttributes
 import android.media.SoundPool
 import android.os.Build
@@ -15,13 +17,14 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.animation.TranslateAnimation
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -32,9 +35,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.ads.AdError
-import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
@@ -43,6 +44,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import kotlinx.coroutines.launch
 import kotlin.random.Random
+// Removed duplicate imports for Color, LinearGradient, and Shader
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "SumRush"
@@ -209,6 +211,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setupGlossyTitle()
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -1089,47 +1092,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupBannerAd() {
-        try {
-            // Find the ad container
-            val adContainer = findViewById<RelativeLayout>(R.id.adContainer)
 
-            // Create new AdView programmatically
-            val adView = AdView(this)
-            adView.adUnitId = "ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
-            val bannerAdSize = AdSize.BANNER
-            adView.setAdSize(AdSize.BANNER)
-
-            // Set layout parameters
-            val params = RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
-            )
-
-            // Add AdView to container
-            adContainer.addView(adView, params)
-
-            // Store reference as class property
-            this.adView = adView
-
-            // Load ad
-            val adRequest = AdRequest.Builder().build()
-            adView.loadAd(adRequest)
-
-            // Add listener
-            adView.adListener = object : AdListener() {
-                override fun onAdLoaded() {
-                    Log.d(TAG, "Ad loaded successfully")
-                }
-
-                override fun onAdFailedToLoad(error: LoadAdError) {
-                    Log.e(TAG, "Ad failed to load: ${error.message}")
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error setting up banner ad: ${e.message}")
-        }
-    }
 
     private fun handleSpecialItem(button: Button, item: SpecialItem) {
         try {
@@ -1279,6 +1242,34 @@ class MainActivity : AppCompatActivity() {
                     containerLayout.removeView(effectImage)
                 }
                 .start()
+        }
+    }
+
+    private fun setupGlossyTitle() {
+        try {
+            // Find title view
+            val titleText = findViewById<TextView>(R.id.gameTitle)
+
+            // Create the vibrant blue gradient
+            val textHeight = titleText.textSize
+
+            // Create gradient using fully qualified names to avoid import conflicts
+            val vibrantBlueGradient = android.graphics.LinearGradient(
+                0f, 0f, 0f, textHeight,
+                intArrayOf(
+                    android.graphics.Color.parseColor("#5DDEF4"),  // Light cyan-blue at top
+                    android.graphics.Color.parseColor("#2196F3"),  // Medium blue in the middle
+                    android.graphics.Color.parseColor("#0D47A1")   // Dark blue at bottom
+                ),
+                floatArrayOf(0f, 0.5f, 1f),
+                android.graphics.Shader.TileMode.CLAMP
+            )
+
+            // Apply the gradient to the text
+            titleText.paint.shader = vibrantBlueGradient
+            titleText.invalidate() // Force redraw with new shader
+        } catch (e: Exception) {
+            Log.e(TAG, "Error setting up glossy title: ${e.message}")
         }
     }
 
@@ -1806,29 +1797,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        adView.pause()
+        // Removed adView.pause() since we're not using banner ads anymore
         super.onPause()
     }
 
     override fun onResume() {
         super.onResume()
-
-        // Check if adView has been initialized before trying to use it
-        if (::adView.isInitialized) {
-            adView.resume()
-        } else {
-            // Initialize AdView if it hasn't been done yet
-            setupBannerAd()
-        }
+        // No need to check adView initialization or call resume
     }
-
-
 
     override fun onDestroy() {
         try {
             countDownTimer?.cancel()
             soundPool.release()
-            adView.destroy()
+            // Removed adView.destroy() since we're not using banner ads anymore
             super.onDestroy()
         } catch (e: Exception) {
             Log.e(TAG, "Error in onDestroy: ${e.message}")

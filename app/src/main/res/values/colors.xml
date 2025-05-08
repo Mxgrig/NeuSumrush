@@ -31,4 +31,8 @@
     <color name="combo_color">#FF9800</color>
     <color name="game_over_color">#E91E63</color>
     <color name="high_score_color">#CDDC39</color>
+    <!-- Add these color resources to your existing colors.xml file -->
+    <color name="title_bright_blue">#0091EA</color>
+    <color name="title_shadow_blue">#143B73</color>
+    <color name="title_highlight_blue">#2979FF</color>
 </resources>
