@@ -1,4 +1,4 @@
-package com.xtenalyze.sumrush
+package com.xtenalyze.numble
 
 import org.junit.Test
 

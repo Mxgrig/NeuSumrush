@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.xtenalyze.sumrush">
+    package="com.xtenalyze.numble">
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -20,7 +20,7 @@
 
         <!-- Splash Activity as launcher -->
         <activity
-            android:name=".SplashActivity"
+            android:name="com.xtenalyze.numble.SplashActivity"
             android:exported="true"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:resizeableActivity="true"
@@ -34,7 +34,7 @@
 
         <!-- Main Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name="com.xtenalyze.numble.MainActivity"
             android:exported="false"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:resizeableActivity="true"

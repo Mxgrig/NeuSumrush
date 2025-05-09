@@ -1,11 +1,9 @@
-package com.xtenalyze.sumrush
+package com.xtenalyze.numble
 
 import android.app.Dialog
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
-import android.graphics.LinearGradient
-import android.graphics.Shader
 import android.media.AudioAttributes
 import android.media.SoundPool
 import android.os.Build
@@ -17,11 +15,9 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.view.animation.TranslateAnimation
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -706,9 +702,9 @@ class MainActivity : AppCompatActivity() {
             // Try to set the font
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    comboFloater.typeface = resources.getFont(R.font.luckiest_guy)
+                    comboFloater.typeface = resources.getFont(R.font.handlee)
                 } else {
-                    comboFloater.typeface = ResourcesCompat.getFont(this, R.font.luckiest_guy)
+                    comboFloater.typeface = ResourcesCompat.getFont(this, R.font.handlee)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error setting combo floater font: ${e.message}")
@@ -1181,9 +1177,9 @@ class MainActivity : AppCompatActivity() {
         // Set font to Luckiest Guy for exciting text
         if (text.contains("DOUBLE") || text.contains("LEVEL") || text.contains("+")) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                floatingText.typeface = resources.getFont(R.font.luckiest_guy)
+                floatingText.typeface = resources.getFont(R.font.handlee)
             } else {
-                floatingText.typeface = ResourcesCompat.getFont(this, R.font.luckiest_guy)
+                floatingText.typeface = ResourcesCompat.getFont(this, R.font.handlee)
             }
         }
 
@@ -1453,9 +1449,9 @@ class MainActivity : AppCompatActivity() {
             // Try to set the font, but don't worry if it fails
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    levelUpText.typeface = resources.getFont(R.font.luckiest_guy)
+                    levelUpText.typeface = resources.getFont(R.font.handlee)
                 } else {
-                    levelUpText.typeface = ResourcesCompat.getFont(this, R.font.luckiest_guy)
+                    levelUpText.typeface = ResourcesCompat.getFont(this, R.font.handlee)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error setting font: ${e.message}")

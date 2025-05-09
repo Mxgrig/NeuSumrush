@@ -25,11 +25,11 @@
     </style>
     <!-- Font style -->
     <style name="GameFont.Regular" parent="@android:style/TextAppearance">
-        <item name="android:fontFamily">@font/fredoka_one</item>
+        <item name="android:fontFamily">@font/handlee</item>
     </style>
 
     <style name="GameFont.Title" parent="@android:style/TextAppearance">
-        <item name="android:fontFamily">@font/luckiest_guy</item>
+        <item name="android:fontFamily">@font/sourgummy</item>
     </style>
     <!-- Base application theme -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -47,7 +47,7 @@
         <item name="android:textColor">@color/button_text</item>
         <item name="android:textSize">24sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">@font/fredoka_one</item>
+        <item name="android:fontFamily">@font/handlee</item>
 
         <!-- Layout -->
         <item name="android:padding">8dp</item>

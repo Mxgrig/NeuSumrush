@@ -5,15 +5,15 @@ plugins {
 }
 
 android {
-    namespace = "com.xtenalyze.sumrush"
+    namespace = "com.xtenalyze.numble"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.xtenalyze.sumrush"
+        applicationId = "com.xtenalyze.numble"
         minSdk = 24
         targetSdk = 35
-        versionCode = 3
-        versionName = "3.0"
+        versionCode = 1
+        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

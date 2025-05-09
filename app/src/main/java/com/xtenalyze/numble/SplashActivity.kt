@@ -1,4 +1,4 @@
-package com.xtenalyze.sumrush
+package com.xtenalyze.numble
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,10 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.xtenalyze.sumrush.ui.theme.SumRushTheme
+import com.xtenalyze.numble.ui.theme.SumRushTheme
 
 class SplashActivity : ComponentActivity() {
-    private val TAG = "SumRush"
+    private val TAG = "Numble"
     private var splashFinished = false
 
     override fun onCreate(savedInstanceState: Bundle?) {

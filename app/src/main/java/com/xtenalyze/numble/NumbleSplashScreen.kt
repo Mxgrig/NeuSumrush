@@ -1,4 +1,4 @@
-package com.xtenalyze.sumrush
+package com.xtenalyze.numble
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.CornerRadius
@@ -35,7 +34,7 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 // Define the game title
-private val gameTitle = "SUMRUSH"
+private val gameTitle = "Numble"
 
 // Define the main theme colors for SumRush with more vibrant blues
 private val primaryColor = Color(0xFF2196F3)  // Brighter main blue

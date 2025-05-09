@@ -1,4 +1,4 @@
-package com.xtenalyze.sumrush.ui.theme
+package com.xtenalyze.numble.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SumRush</string>
+    <string name="app_name">Numble</string>
     <!-- Game UI -->
 
     <string name="target_number_label">Target:</string>
